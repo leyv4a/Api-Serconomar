@@ -9,7 +9,8 @@ export const getAll = async () => {
      await connection.end();
      return rows;
    } catch (error) {
-    console.error('Error en la aplicación:', error);
+    const now = new Date();
+    console.error(now.toLocaleString()+ ' Error en la aplicación:', error);
    }
   };
 
@@ -17,10 +18,23 @@ export const AddItem = async (titulo, descripcion, requisitos, ubicacion, estado
     try {
         const connection = await getConnection();
 
+        const data = [titulo,descripcion,requisitos,ubicacion,estadoCivil,edad,sexo,escolaridad,cantidad,estado];
+
+      
         const query = "INSERT INTO BolsaTrabajo (titulo, descripcion, requisitos, ubicacion, estadoCivil, edad, sexo, escolaridad, cantidad, estado) VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         await connection.query(query, data);
+
+        return true;
+
     }catch(error){
-        console.log('Error en la aplicación:', error);
+        const now = new Date();
+        if (error.code === 'ER_DUP_ENTRY') {
+            
+            console.log(now.toLocaleString()+' El título ya existe en la base de datos');
+        } else {
+            // Manejar otros errores
+           console.log(now.toLocaleString()+ error);
+        }
     }
 }
